@@ -45,7 +45,7 @@ module sui_attendance_nft::meet {
 		meet
 	}
 
-	public fun attendances_mut(self: &mut Meet): &mut vector<ID> { &mut self.attendances }
+	public(package) fun attendances_mut(self: &mut Meet): &mut vector<ID> { &mut self.attendances }
 
 	public fun id(self: &Meet): ID { self.id.to_inner()}
 

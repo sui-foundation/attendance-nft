@@ -1,11 +1,13 @@
 module sui_attendance_nft::attendance {
 	use sui::tx_context::{sender};
     use std::string::{String};
-	use sui_attendance_nft::meet::{Meet};
+	use sui::event;
 
     // The creator bundle: these two packages often go together.
     use sui::package;
     use sui::display;
+
+	const ETransferDisabled: u64 = 0;
 
 	public struct ATTENDANCE has drop {}
 
@@ -15,9 +17,14 @@ module sui_attendance_nft::attendance {
 		name: String,
         image_id: String,
 		description: String,
-		tier: u32,
+		tier: u8,
 		meet_id: ID,
+		transfer_allowed: u8,
     }
+
+	public struct AttendanceCreated has copy, drop {
+		id: ID,
+	}
 
     fun init(otw: ATTENDANCE, ctx: &mut TxContext) {
 		let keys = vector[
@@ -51,28 +58,39 @@ module sui_attendance_nft::attendance {
 		transfer::public_transfer(display, ctx.sender());
 	}
 
-	entry fun mint_and_transfer(
-		meet: &mut Meet,
+	public(package) fun new_attendance(
 		name: String,
+		description: String,
 		image_id: String,
-		tier: u32,
-		to_addr: address, 
+		tier: u8,
+		meet_id: ID,
 		ctx: &mut TxContext
-	) {
+	): Attendance {
 		let attendance = Attendance {
 			id: object::new(ctx),
 			name: name,
-			description: meet.description(),
-			tier: tier,
+			description: description,
 			image_id: image_id,
-			meet_id: meet.id(),
+			tier: tier,
+			meet_id: meet_id,
+			transfer_allowed: 2,
 		};
-		meet.attendances_mut().push_back(attendance.id.to_inner());
+		event::emit(AttendanceCreated { id: attendance.id.to_inner() });
 
-		transfer::transfer(attendance, to_addr);
+		attendance
 	}
 
+	public fun id(self: &Attendance): ID { self.id.to_inner()}
+
 	public fun name(self: &Attendance): String { self.name }
+
+	public fun transfer_allowed(self: &Attendance): u8 { self.transfer_allowed }
+
+	public fun transfer_attendance(mut a: Attendance, to: address) {
+		assert!(a.transfer_allowed > 0, ETransferDisabled);
+		a.transfer_allowed = a.transfer_allowed - 1;
+		transfer::transfer(a, to);
+	}
 
 	#[test_only]
 	public fun init_for_testing(ctx: &mut TxContext) {
