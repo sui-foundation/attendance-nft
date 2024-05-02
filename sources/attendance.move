@@ -86,7 +86,7 @@ module sui_attendance_nft::attendance {
 
 	public fun transfer_allowed(self: &Attendance): u8 { self.transfer_allowed }
 
-	public fun transfer_attendance(mut a: Attendance, to: address) {
+	public(package) fun transfer_attendance(mut a: Attendance, to: address) {
 		assert!(a.transfer_allowed > 0, ETransferDisabled);
 		a.transfer_allowed = a.transfer_allowed - 1;
 		transfer::transfer(a, to);
