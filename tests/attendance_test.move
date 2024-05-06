@@ -1,6 +1,6 @@
 #[test_only]
 module sui_attendance_nft::attendance_test {
-	use sui_attendance_nft::command::{mint_and_transfer};
+	use sui_attendance_nft::command::{mint_and_transfer, mint_and_transfer_bulk};
 	use sui_attendance_nft::attendance::{Attendance, transfer_attendance, ETransferDisabled};
 	use sui_attendance_nft::meet::{AdminCap,Meet,new_meet};
 	use std::debug;
@@ -83,6 +83,55 @@ module sui_attendance_nft::attendance_test {
         // assert!(shared_ids.length() == 1, 1);
         // assert!(sent_ids.size() == 1, 2);
         // assert!(events_num == 0, 3);
+
+		scenario.end();
+	}
+
+	#[test]
+	fun test_mint_bulk() {
+		let (alice, bob) = (@0x1, @0x2);
+
+		let mut scenario = test_scenario::begin(alice);
+		{
+			sui_attendance_nft::meet::init_for_testing(scenario.ctx());
+			sui_attendance_nft::attendance::init_for_testing(scenario.ctx());
+		};
+
+		scenario.next_tx(alice);
+		{
+			let adminCap = scenario.take_from_sender<AdminCap>();
+			let meet = new_meet(
+				&adminCap,
+				b"Rochester".to_string(),
+				b"2024-04-26".to_string(),
+				b"test description".to_string(),
+				option::none(),
+				scenario.ctx()
+			);
+			scenario.return_to_sender(adminCap);
+			transfer::public_transfer(meet, bob);
+		};
+
+		scenario.next_tx(bob);
+		{
+			let mut meet = scenario.take_from_sender<Meet>();
+			let name_vec = vector[b"Bob".to_string(), b"Fran".to_string()];
+			let image_id_vec = vector[b"image_url".to_string(), b"image_url".to_string()];
+			let tiers = vector[1, 2];
+			let to_addr_vec = vector[bob, bob];
+
+			mint_and_transfer_bulk(
+				&mut meet,
+				name_vec,
+				image_id_vec,
+				tiers,
+				to_addr_vec,
+				scenario.ctx(),
+			);
+			assert!(meet.attendances().length() == 2, 0);
+
+			scenario.return_to_sender(meet);
+		};
 
 		scenario.end();
 	}
