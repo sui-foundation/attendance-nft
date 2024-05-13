@@ -3,9 +3,9 @@
 sui client ptb \
 	--move-call sui::tx_context::sender \
 	--assign sender \
-	--assign adminCap @0xd69362d2561c5140b921d4b4095fdc83ffa030a1fe510f864d82b4f2bf17cafb \
+	--assign adminCap @0xfc1c01bf941a8877a336ebbba704f061bb1d349a4d446a661bfe681ce8052c7a \
 	--assign n none \
-	--move-call 0x30533ad31831e6dbcc865c27699eeac59e3f4b46df9346e7a48e2f36754ef479::meet::new_meet adminCap '"Rochester"' '"2024-04-27"' '"test description 2"' n \
+	--move-call 0x63909bdfeab20457962e6840ed383bf0af40f9bbfcb15a502ab2e7960ceb41d7::meet::new adminCap '"Rochester"' '"2024-04-27"' '"test description 2"' n \
 	--assign meet \
 	--transfer-objects [meet] sender \
 	--gas-budget 20000000

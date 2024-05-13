@@ -1,7 +1,7 @@
 module sui_attendance_nft::command {
 	use std::string::String;
 	use sui_attendance_nft::meet::{Meet};
-	use sui_attendance_nft::attendance::{new_attendance, transfer_attendance};
+	use sui_attendance_nft::attendance::{new, transfer_attendance};
 	fun init(_: &mut TxContext) {}
 
 	const ELengthMismatch: u64 = 0;
@@ -9,16 +9,17 @@ module sui_attendance_nft::command {
 	public fun mint_and_transfer(
 		meet: &mut Meet,
 		name: String,
+		description: String,
 		image_id: String,
 		tier: u8,
 		to_addr: address, 
 		ctx: &mut TxContext
 	) {
-		let attendance = new_attendance(
+		let attendance = new(
 			name, 
-			meet.description(),
+			description,
 			image_id, 
-			tier, 
+			tier,
 			meet.id(),
 			ctx
 		);
@@ -31,6 +32,7 @@ module sui_attendance_nft::command {
 	public fun mint_and_transfer_bulk(
 		meet: &mut Meet,
 		names: vector<String>,
+		description: String,
 		image_ids: vector<String>,
 		tiers: vector<u8>,
 		to_addr: vector<address>,
@@ -42,7 +44,7 @@ module sui_attendance_nft::command {
 		let bulk_length = names.length();
 		let mut i = 0;
 		while (i < bulk_length) {
-			mint_and_transfer(meet, names[i], image_ids[i], tiers[i], to_addr[i], ctx);
+			mint_and_transfer(meet, names[i], description, image_ids[i], tiers[i], to_addr[i], ctx);
 			i = i + 1;
 		}
 	}

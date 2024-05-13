@@ -1,7 +1,6 @@
 [package]
 name = "sui_attendance_nft"
 version = "0.0.0"
-published-at = "0x101805976cb3c29adf4d16bc8dbcb2bf1f360db1858745424c46059952c56ec6"
 
 edition = "2024.beta" # To use the Move 2024 edition, currently in alpha
 # license = ""           # e.g., "MIT", "GPL", "Apache 2.0"
@@ -23,6 +22,9 @@ Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-fram
 
 [addresses]
 sui_attendance_nft = "0x0"
+alice = "0xA11CE"
+bob = "0xB0B"
+fran = "0xF13A"
 
 # Named addresses will be accessible in Move as `@name`. They're also exported:
 # for example, `std = "0x1"` is exported by the Standard Library.
@@ -36,5 +38,4 @@ sui_attendance_nft = "0x0"
 [dev-addresses]
 # The dev-addresses section allows overwriting named addresses for the `--test`
 # and `--dev` modes.
-# alice = "0xB0B"
 

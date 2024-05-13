@@ -7,6 +7,8 @@ module sui_attendance_nft::meet {
     public struct AdminCap has key { id: UID }
 	public struct MEET has drop {}
 
+	const EMissingUpdateParams: u64 = 0;
+
 	public struct Meet has key, store {
 		id: UID,
 		location: String,
@@ -24,7 +26,7 @@ module sui_attendance_nft::meet {
 		transfer::transfer(adminCap, ctx.sender());
 	}
 
-	public fun new_meet(
+	public fun new(
 		_: &AdminCap,
 		location: String,
 		date: String,
@@ -43,6 +45,20 @@ module sui_attendance_nft::meet {
 		event::emit(MeetCreated{ id: meet.id.to_inner() });
 
 		meet
+	}
+
+	public fun update(
+		meet: &mut Meet,
+		location: Option<String>,
+		date: Option<String>,
+		description: Option<String>,
+		series: Option<String>,
+	) {
+		assert!(location.is_some() || date.is_some() || description.is_some() || series.is_some(), EMissingUpdateParams);
+		meet.location = location.get_with_default(meet.location);
+		meet.date = date.get_with_default(meet.date);
+		meet.description = description.get_with_default(meet.description);
+		meet.series = series;
 	}
 
 	public(package) fun attendances_mut(self: &mut Meet): &mut vector<ID> { &mut self.attendances }

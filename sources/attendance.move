@@ -1,6 +1,8 @@
 module sui_attendance_nft::attendance {
 	use sui::tx_context::{sender};
     use std::string::{String};
+	use sui::coin::Coin;
+	use sui::transfer::Receiving;
 	use sui::event;
 
     // The creator bundle: these two packages often go together.
@@ -58,7 +60,7 @@ module sui_attendance_nft::attendance {
 		transfer::public_transfer(display, ctx.sender());
 	}
 
-	public(package) fun new_attendance(
+	public(package) fun new(
 		name: String,
 		description: String,
 		image_id: String,
@@ -73,7 +75,7 @@ module sui_attendance_nft::attendance {
 			image_id: image_id,
 			tier: tier,
 			meet_id: meet_id,
-			transfer_allowed: 2,
+			transfer_allowed: 1,
 		};
 		event::emit(AttendanceCreated { id: attendance.id.to_inner() });
 
@@ -86,10 +88,16 @@ module sui_attendance_nft::attendance {
 
 	public fun transfer_allowed(self: &Attendance): u8 { self.transfer_allowed }
 
+	public fun tier(self: &Attendance): u8 { self.tier }
+
 	public(package) fun transfer_attendance(mut a: Attendance, to: address) {
 		assert!(a.transfer_allowed > 0, ETransferDisabled);
 		a.transfer_allowed = a.transfer_allowed - 1;
 		transfer::transfer(a, to);
+	}
+
+	public fun receive<T>(a: &mut Attendance, sent: Receiving<Coin<T>>): Coin<T> {
+		transfer::public_receive(&mut a.id, sent)
 	}
 
 	#[test_only]
