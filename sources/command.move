@@ -2,7 +2,6 @@ module sui_attendance_nft::command {
 	use std::string::String;
 	use sui_attendance_nft::meet::{Meet};
 	use sui_attendance_nft::attendance::{new, transfer_attendance};
-	fun init(_: &mut TxContext) {}
 
 	const ELengthMismatch: u64 = 0;
 

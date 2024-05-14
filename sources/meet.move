@@ -3,7 +3,6 @@ module sui_attendance_nft::meet {
 	use sui::event;
 
 
-	// A struct with `key` is an object. The first field is `id: UID`!
     public struct AdminCap has key { id: UID }
 	public struct MEET has drop {}
 
