@@ -1,8 +1,7 @@
 #[test_only]
 module sui_attendance_nft::attendance_test {
-	use sui::sui::SUI;
-	use sui_attendance_nft::command::{mint_and_transfer, mint_and_transfer_bulk};
-	use sui_attendance_nft::attendance::{Attendance, transfer_attendance, ETransferDisabled, receive};
+	use sui_attendance_nft::command::{mint_and_transfer_bulk};
+	use sui_attendance_nft::attendance::{mint_and_transfer, Attendance, receive};
 	use sui_attendance_nft::meet::{AdminCap,Meet,new};
 	use sui::coin::{mint_for_testing, Coin};
 
@@ -18,8 +17,8 @@ module sui_attendance_nft::attendance_test {
             sui_attendance_nft::meet::init_for_testing(scenario.ctx());
             sui_attendance_nft::attendance::init_for_testing(scenario.ctx());
 		};
-
 		scenario.next_tx(@alice);
+
 		{
 			let adminCap = scenario.take_from_sender<AdminCap>();
 			let meet = new(
@@ -33,8 +32,8 @@ module sui_attendance_nft::attendance_test {
 			scenario.return_to_sender(adminCap);
 			transfer::public_transfer(meet, @bob);
 		};
-
 		scenario.next_tx(@bob);
+
 		{
 			let mut meet = scenario.take_from_sender<Meet>();
 
@@ -47,13 +46,16 @@ module sui_attendance_nft::attendance_test {
 				@bob,
 				scenario.ctx(),
 			);
-			assert!(meet.attendances().length() == 1, 0);
 
 			scenario.return_to_sender(meet);
 		};
-
 		scenario.next_tx(@bob);
+
 		{
+			let a = scenario.take_from_sender<Attendance>();
+			assert!(a.name() == b"Bob".to_string(), 3);
+            scenario.return_to_sender(a);
+
 			let mut meet = scenario.take_from_sender<Meet>();
 			mint_and_transfer(
 				&mut meet,
@@ -65,22 +67,14 @@ module sui_attendance_nft::attendance_test {
 				scenario.ctx(),
 			);
 
-			assert!(meet.attendances().length() == 2, 0);
 			scenario.return_to_sender(meet);
 		};
-
 		scenario.next_tx(@fran);
-		{
-			let mut a = scenario.take_from_sender<Attendance>();
-			assert!(a.name() == b"Fran".to_string(), 3);
 
-			let new_coin = mint_for_testing<TestCoin>(1000, scenario.ctx());
-			transfer::public_transfer(new_coin, a.id().to_address());
+        let a = scenario.take_from_sender<Attendance>();
+        assert!(a.name() == b"Fran".to_string(), 3);
+        scenario.return_to_sender(a);
 
-			let ticket = scenario.most_recent_receiving_ticket<Coin<TestCoin>>(a.id());
-
-			scenario.return_to_sender(a);
-		};
 
 		scenario.end();
 	}
@@ -92,8 +86,8 @@ module sui_attendance_nft::attendance_test {
 			sui_attendance_nft::meet::init_for_testing(scenario.ctx());
 			sui_attendance_nft::attendance::init_for_testing(scenario.ctx());
 		};
-
 		scenario.next_tx(@alice);
+
 		{
 			let adminCap = scenario.take_from_sender<AdminCap>();
 			let meet = new(
@@ -126,25 +120,24 @@ module sui_attendance_nft::attendance_test {
 				to_addr_vec,
 				scenario.ctx(),
 			);
-			assert!(meet.attendances().length() == 2, 0);
 
 			scenario.return_to_sender(meet);
 		};
+        scenario.next_tx(@bob);
+        assert!(scenario.ids_for_sender<Attendance>().length() == 2, 0);
 
 		scenario.end();
 	}
 
-	#[test]
-	#[expected_failure(abort_code =  ETransferDisabled)]
-	fun test_transfer_fail() {
+    #[test]
+    fun test_receive() {
 		let mut scenario = test_scenario::begin(@alice);
 		{
-            sui_attendance_nft::meet::init_for_testing(scenario.ctx());
-            sui_attendance_nft::attendance::init_for_testing(scenario.ctx());
+			sui_attendance_nft::meet::init_for_testing(scenario.ctx());
+			sui_attendance_nft::attendance::init_for_testing(scenario.ctx());
 		};
-
-		// Create a Meet
 		scenario.next_tx(@alice);
+
 		{
 			let adminCap = scenario.take_from_sender<AdminCap>();
 			let meet = new(
@@ -156,11 +149,10 @@ module sui_attendance_nft::attendance_test {
 				scenario.ctx()
 			);
 			scenario.return_to_sender(adminCap);
-			transfer::public_transfer(meet, @alice);
+			transfer::public_transfer(meet, @bob);
 		};
+		scenario.next_tx(@bob);
 
-		// Create an Attendance
-		scenario.next_tx(@alice);
 		{
 			let mut meet = scenario.take_from_sender<Meet>();
 
@@ -170,32 +162,47 @@ module sui_attendance_nft::attendance_test {
 				b"description".to_string(),
 				b"image_url".to_string(),
 				1,
-				@alice,
+				@bob,
 				scenario.ctx(),
 			);
-			assert!(meet.attendances().length() == 1, 0);
 
 			scenario.return_to_sender(meet);
 		};
-
-		// Transfer the Attendance
-		scenario.next_tx(@alice);
-		{
-			let a = scenario.take_from_sender<Attendance>();
-
-			transfer_attendance(a, @bob);
-		};
-
 		scenario.next_tx(@bob);
+        let coin_id;
+
 		{
 			let a = scenario.take_from_sender<Attendance>();
-			assert!(a.transfer_allowed() == 0, 1);
-			
-			transfer_attendance(a, @alice);
-		};
+			assert!(a.name() == b"Bob".to_string(), 3);
 
-		scenario.end();
-	}
+			let new_coin = mint_for_testing<TestCoin>(1000, scenario.ctx());
+            coin_id = object::id(&new_coin);
+			transfer::public_transfer(new_coin, a.id().to_address());
+
+			scenario.return_to_sender(a);
+		};
+        let effects = scenario.next_tx(@bob);
+
+        {
+            let prev_transfers = effects.transferred_to_account();
+
+			let mut a = scenario.take_from_sender<Attendance>();
+            // Assert the Coin is now a child object of the Attendance
+            assert!(prev_transfers[&coin_id].to_id() == a.id(), 1);
+			let ticket = test_scenario::most_recent_receiving_ticket<Coin<TestCoin>>(&a.id());
+
+            let test_coin = receive<Coin<TestCoin>>(&mut a, ticket);
+            transfer::public_transfer(test_coin, @alice);
+
+            let effects = scenario.next_tx(@bob);
+            let receive_res = &effects.transferred_to_account();
+            assert!(receive_res[&coin_id] == @alice, 2);
+
+            scenario.return_to_sender(a);
+        };
+
+        scenario.end();
+    }
 
 	#[test]
 	#[expected_failure]

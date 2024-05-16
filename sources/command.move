@@ -1,31 +1,9 @@
 module sui_attendance_nft::command {
     use std::string::String;
     use sui_attendance_nft::meet::{Meet};
-    use sui_attendance_nft::attendance::{new, transfer_attendance};
+    use sui_attendance_nft::attendance::{mint_and_transfer};
 
     const ELengthMismatch: u64 = 0;
-
-    public fun mint_and_transfer(
-        meet: &mut Meet,
-        name: String,
-        description: String,
-        image_id: String,
-        tier: u8,
-        to_addr: address, 
-        ctx: &mut TxContext
-    ) {
-        let attendance = new(
-            name, 
-            description,
-            image_id, 
-            tier,
-            meet.id(),
-            ctx
-        );
-        meet.attendances_mut().push_back(attendance.id());
-
-        transfer_attendance(attendance, to_addr);
-    }
 
     // mint and transfer in bulk
     public fun mint_and_transfer_bulk(

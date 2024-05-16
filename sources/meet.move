@@ -6,15 +6,12 @@ module sui_attendance_nft::meet {
     public struct AdminCap has key { id: UID }
     public struct MEET has drop {}
 
-    const EMissingUpdateParams: u64 = 0;
-
     public struct Meet has key, store {
         id: UID,
         location: String,
         date: String,
         description: String,
         series: Option<String>,
-        attendances: vector<ID>,
     }
     public struct MeetCreated has copy, drop {
         id: ID,
@@ -39,28 +36,27 @@ module sui_attendance_nft::meet {
             date: date,
             description: description,
             series: series,
-            attendances: vector::empty(),
         };
         event::emit(MeetCreated{ id: meet.id.to_inner() });
 
         meet
     }
 
-    public fun update(
-        meet: &mut Meet,
-        location: Option<String>,
-        date: Option<String>,
-        description: Option<String>,
-        series: Option<String>,
-    ) {
-        assert!(location.is_some() || date.is_some() || description.is_some() || series.is_some(), EMissingUpdateParams);
-        meet.location = location.get_with_default(meet.location);
-        meet.date = date.get_with_default(meet.date);
-        meet.description = description.get_with_default(meet.description);
-        meet.series = series;
+    public fun update_location(meet: &mut Meet, location: String) {
+        meet.location = location;
     }
 
-    public(package) fun attendances_mut(self: &mut Meet): &mut vector<ID> { &mut self.attendances }
+    public fun update_date(meet: &mut Meet, date: String) {
+        meet.date = date;
+    }
+
+    public fun update_description(meet: &mut Meet, description: String) {
+        meet.description = description;
+    }
+
+    public fun update_series(meet: &mut Meet, series: Option<String>) {
+        meet.series = series;
+    }
 
     public fun id(self: &Meet): ID { self.id.to_inner()}
 
@@ -71,8 +67,6 @@ module sui_attendance_nft::meet {
     public fun description(self: &Meet): String { self.description }
 
     public fun series(self: &Meet): Option<String> { self.series }
-
-    public fun attendances(self: &Meet): vector<ID> { self.attendances }
 
     #[test_only]
     public fun init_for_testing(ctx: &mut TxContext) {
