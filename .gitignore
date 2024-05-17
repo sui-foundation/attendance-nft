@@ -6,5 +6,7 @@ target/
 Move.lock
 
 .vscode
-*.log
 **/build/**
+deploy.log
+
+test*.csv

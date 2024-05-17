@@ -105,17 +105,17 @@ module sui_attendance_nft::attendance_test {
 		scenario.next_tx(@bob);
 		{
 			let mut meet = scenario.take_from_sender<Meet>();
-			let name_vec = vector[b"Bob".to_string(), b"Fran".to_string()];
+			let name = b"Bob".to_string();
 			let desc = b"description".to_string();
-			let image_id_vec = vector[b"image_url".to_string(), b"image_url".to_string()];
-			let tiers = vector[1, 2];
+            let image_id = b"image_url".to_string();
+			let tiers = 1;
 			let to_addr_vec = vector[@bob, @bob];
 
 			mint_and_transfer_bulk(
 				&mut meet,
-				name_vec,
+				name,
 				desc,
-				image_id_vec,
+				image_id,
 				tiers,
 				to_addr_vec,
 				scenario.ctx(),
