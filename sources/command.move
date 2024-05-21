@@ -8,7 +8,7 @@ module sui_attendance_nft::command {
         meet: &mut Meet,
         name: String,
         description: String,
-        image_ids: String,
+        image_id: String,
         tiers: u8,
         to_addr: vector<address>,
         ctx: &mut TxContext
@@ -16,7 +16,7 @@ module sui_attendance_nft::command {
         let bulk_length = to_addr.length();
         let mut i = 0;
         while (i < bulk_length) {
-            mint_and_transfer(meet, name, description, image_ids, tiers, to_addr[i], ctx);
+            mint_and_transfer(meet, name, description, image_id, tiers, to_addr[i], ctx);
             i = i + 1;
         }
     }

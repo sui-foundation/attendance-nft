@@ -108,6 +108,16 @@ module sui_attendance_nft::attendance {
         transfer::public_receive(&mut a.id, sent)
     }
 
+    public fun receive_key<T: key>(a: &mut Attendance, sent: Receiving<T>) {
+        let received = transfer::receive<T>(&mut a.id, sent);
+        transfer::transfer(received, sender());
+    }
+
+    public fun receive_recursive(a: &mut Attendance, sent: Receiving<Attendance>, ctx: &mut TxContext) {
+        let received = transfer::receive(&mut a.id, sent);
+        transfer::transfer(received, ctx.sender());
+    }
+
     #[test_only]
     public fun init_for_testing(ctx: &mut TxContext) {
         let otw = ATTENDANCE{};
