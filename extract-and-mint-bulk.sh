@@ -1,6 +1,6 @@
 #!/bin/bash
 
-raw_addresses=$(awk -F, '{OFS=",";print $2}' ./csvs/suins.csv)
+raw_addresses=$(awk -F, '{OFS=",";print $2}' ./csvs/2024-05-24.csv)
 
 # create a new array from raw_addresses to store addresses that have 66 characters in length
 valid_addresses_array=()
@@ -29,12 +29,18 @@ for ((i=0; i<${#valid_addresses_array[@]}; i+=200)); do
   addresses=[${addresses_trailing_comma%,}]
   package_id="0x41a3350004440adf89a2f837c1e4c0bf1fe4edf6e08b56383ccb5c1606f210c1"
   meet=@0x49b6ea50eaf249f6ded5fb1a096a6297e428ab97f1dc1f873e91ba8a9a8a6073
-  image_id='"https://github.com/sui-foundation/attendance-nft/raw/zihe/add-gifs/gifs/overflow-registration.gif"'
-  name='"test nft"'
-  desc='"registered"'
-  tier="4u8"
+  image_id='"https://github.com/sui-foundation/attendance-nft/raw/main/gifs/overflow-registration.gif"'
+  name='"Joined Sui Overflow 2024"'
+  desc='"A commemorative NFT for participating in the 2024 Sui Overflow global hackathon"'
+  tier="5u8"
 
   t=$(date '+%Y-%m-%dT%H:%M:%S')
+
+  # if i is smaller than 600, skip the minting Processing
+  if [ $i -lt 600 ]; then
+    echo "Skipping minting Processing for chunk $i" >> response.log
+    continue
+  fi
 
   sui client ptb \
     --assign meet $meet \
@@ -45,7 +51,7 @@ for ((i=0; i<${#valid_addresses_array[@]}; i+=200)); do
     --make-move-vec "<address>" $addresses \
     --assign addrs \
     --move-call $package_id::command::mint_and_transfer_bulk meet name desc image tier addrs \
-    --gas-budget 3000000000 >> ./logs/response-${t}.log
+    --gas-budget 2000000000 >> ./logs/batch-${i}-${t}.log
 
   echo ${#chunk[@]}
 done

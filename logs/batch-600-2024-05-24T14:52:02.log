@@ -1,0 +1,4 @@
+RPC call failed: ErrorObject { code: ServerError(-32002), message: "Transaction execution failed due to issues with transaction inputs, please review the errors and try again: Object (0xb0b6745d74734fb22bb66627285692131777bc1e1abacd6cd36946672fd52087, SequenceNumber(98624802), o#5uRqUvF1Yrw9fzWDJPXzXZJEhw7SsRgQLL1m82MrPvWB) is not available for consumption, its current version: SequenceNumber(98624804)..", data: None }
+
+Caused by:
+    RPC call failed: ErrorObject { code: ServerError(-32002), message: "Transaction execution failed due to issues with transaction inputs, please review the errors and try again: Object (0xb0b6745d74734fb22bb66627285692131777bc1e1abacd6cd36946672fd52087, SequenceNumber(98624802), o#5uRqUvF1Yrw9fzWDJPXzXZJEhw7SsRgQLL1m82MrPvWB) is not available for consumption, its current version: SequenceNumber(98624804)..", data: None }
