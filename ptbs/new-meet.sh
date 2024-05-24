@@ -3,9 +3,9 @@
 sui client ptb \
 	--move-call sui::tx_context::sender \
 	--assign sender \
-	--assign adminCap @0x39c968bf0a2da03e98bf1d094a72ad38a9dfe8bdf28198bda56e9c79bcde76a3 \
+	--assign adminCap @0xdd9cfd692386653334cc7d2bfe9db2e61852cbe67a7c598971b53fdd3218670d \
 	--assign n none \
-	--move-call 0x6283e20d17ea079e8d113bb2fcd878a2f5f1978b145224d591b5a35d0b3f94a4::meet::new adminCap '"Rochester"' '"2024-04-27"' '"test description 2"' n \
+	--move-call 0x41a3350004440adf89a2f837c1e4c0bf1fe4edf6e08b56383ccb5c1606f210c1::meet::new adminCap '"Remote"' '"2024-04-21"' '"2024 Sui Overflow global hackathon"' n \
 	--assign meet \
 	--transfer-objects [meet] sender \
 	--gas-budget 20000000

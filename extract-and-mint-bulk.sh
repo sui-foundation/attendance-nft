@@ -1,6 +1,6 @@
 #!/bin/bash
 
-raw_addresses=$(awk -F, '{OFS=",";print $2}' ./test.csv)
+raw_addresses=$(awk -F, '{OFS=",";print $2}' ./csvs/suins.csv)
 
 # create a new array from raw_addresses to store addresses that have 66 characters in length
 valid_addresses_array=()
@@ -15,7 +15,8 @@ sui_ns=()
 for addr in $raw_addresses; do
   # if the address has ".sui" suffix, add it to the sui_ns array
   if [[ $addr == *".sui" ]]; then
-      sui_ns+=($addr)
+    echo "sui ns addr: $addr"
+    sui_ns+=($addr)
   fi
 done
 echo "omitting ${#sui_ns[@]} addresses with .sui suffix"
@@ -26,8 +27,8 @@ for ((i=0; i<${#valid_addresses_array[@]}; i+=200)); do
   chunk=("${valid_addresses_array[@]:i:200}")
   addresses_trailing_comma=$(printf '@%s,' ${chunk[*]})
   addresses=[${addresses_trailing_comma%,}]
-  package_id="0x6283e20d17ea079e8d113bb2fcd878a2f5f1978b145224d591b5a35d0b3f94a4"
-  meet=@0x6402fda6360b5ac3d93a26031b045f2dd1b58eef54e409665dc0392b1f33d180
+  package_id="0x41a3350004440adf89a2f837c1e4c0bf1fe4edf6e08b56383ccb5c1606f210c1"
+  meet=@0x49b6ea50eaf249f6ded5fb1a096a6297e428ab97f1dc1f873e91ba8a9a8a6073
   image_id='"https://github.com/sui-foundation/attendance-nft/raw/zihe/add-gifs/gifs/overflow-registration.gif"'
   name='"test nft"'
   desc='"registered"'
