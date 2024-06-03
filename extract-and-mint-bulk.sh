@@ -1,6 +1,6 @@
 #!/bin/bash
 
-raw_addresses=$(awk -F, '{OFS=",";print $2}' ./csvs/2024-05-24.csv)
+raw_addresses=$(awk -F, '{OFS=",";print $2}' ./csvs/after-2024-05-24.csv)
 
 # create a new array from raw_addresses to store addresses that have 66 characters in length
 valid_addresses_array=()
@@ -36,12 +36,6 @@ for ((i=0; i<${#valid_addresses_array[@]}; i+=200)); do
 
   t=$(date '+%Y-%m-%dT%H:%M:%S')
 
-  # if i is smaller than 600, skip the minting Processing
-  if [ $i -lt 600 ]; then
-    echo "Skipping minting Processing for chunk $i" >> response.log
-    continue
-  fi
-
   sui client ptb \
     --assign meet $meet \
     --assign tier $tier \
@@ -51,9 +45,10 @@ for ((i=0; i<${#valid_addresses_array[@]}; i+=200)); do
     --make-move-vec "<address>" $addresses \
     --assign addrs \
     --move-call $package_id::command::mint_and_transfer_bulk meet name desc image tier addrs \
-    --gas-budget 2000000000 >> ./logs/batch-${i}-${t}.log
+    --gas-budget 2000000000 >> ./logs/${t}-batch-${i}.log
 
   echo ${#chunk[@]}
+  sleep 2
 done
 
 # echo ${valid_addresses_array[*]}
