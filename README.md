@@ -11,10 +11,10 @@ The NFTs are soul-bound and cannot be transferred once issued.
 - `ptbs/` contains the PTBs to interact with the Sui package via the Sui PTB CLI
 
 ## TODO
-- [ ] Export Airtable data
-- [ ] Parse exported Airtable data to generate list of Sui addresses for airdrop
-- [ ] Deploy Sui PTBs to Sui blockchain
-- [ ] Submit Sui PTBs for airdrop in batches
+- [x] Export Airtable data
+- [x] Parse exported Airtable data to generate list of Sui addresses for airdrop
+- [x] Deploy Sui PTBs to Sui blockchain
+- [x] Submit Sui PTBs for airdrop in batches
 
 ## Design Doc
 See [Design Doc](https://docs.google.com/document/d/1dFfMFkAWpG5DQsB4HJoaEC-iEZ91DthnB5oEJCLKyGA/edit)
