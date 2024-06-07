@@ -1,6 +1,6 @@
 #!/bin/bash
 
-raw_addresses=$(awk -F, '{OFS=",";print $2}' ./csvs/after-2024-05-24.csv)
+raw_addresses=$(awk -F, '{OFS=",";print $2}' ./csvs/submission.csv)
 
 # create a new array from raw_addresses to store addresses that have 66 characters in length
 valid_addresses_array=()
@@ -29,10 +29,10 @@ for ((i=0; i<${#valid_addresses_array[@]}; i+=200)); do
   addresses=[${addresses_trailing_comma%,}]
   package_id="0x41a3350004440adf89a2f837c1e4c0bf1fe4edf6e08b56383ccb5c1606f210c1"
   meet=@0x49b6ea50eaf249f6ded5fb1a096a6297e428ab97f1dc1f873e91ba8a9a8a6073
-  image_id='"https://github.com/sui-foundation/attendance-nft/raw/main/gifs/overflow-registration.gif"'
-  name='"Joined Sui Overflow 2024"'
-  desc='"A commemorative NFT for participating in the 2024 Sui Overflow global hackathon"'
-  tier="5u8"
+  image_id='"https://github.com/sui-foundation/attendance-nft/raw/main/gifs/overflow-submission.gif"'
+  name='"Hacker at Sui Overflow 2024"'
+  desc='"Certified hacker who submitted a project at the 2024 Sui Overflow global hackathon"'
+  tier="4u8"
 
   t=$(date '+%Y-%m-%dT%H:%M:%S')
 
