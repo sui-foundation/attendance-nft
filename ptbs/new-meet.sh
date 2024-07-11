@@ -3,10 +3,10 @@
 sui client ptb \
 	--move-call sui::tx_context::sender \
 	--assign sender \
-	--assign adminCap @0xdd9cfd692386653334cc7d2bfe9db2e61852cbe67a7c598971b53fdd3218670d \
-	--assign n none \
-	--move-call 0x41a3350004440adf89a2f837c1e4c0bf1fe4edf6e08b56383ccb5c1606f210c1::meet::new adminCap '"Remote"' '"2024-04-21"' '"2024 Sui Overflow global hackathon"' n \
+	--assign adminCap @0x90e7ff265c8bd06cbbbfb221f0479a54b1d4b440a8bbc88fd3dc159f719c64b3 \
+  --move-call 0x1::option::none "<0x1::string::String>" \
+	--assign n \
+	--move-call 0x3b3aed1d6d2c9b602a499a95c09ead18bf6d4de316f67aff8db1a0b9f16c46e8::meet::new adminCap '"Remote"' '"2024-04-21"' '"2024 Sui Overflow global hackathon"' n \
 	--assign meet \
 	--transfer-objects [meet] sender \
 	--gas-budget 20000000
-

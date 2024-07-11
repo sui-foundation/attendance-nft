@@ -10,3 +10,4 @@ Move.lock
 deploy.log
 
 test*.csv
+.DS_Store
