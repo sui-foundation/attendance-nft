@@ -1,6 +1,6 @@
 #!/bin/bash
 
-filename="./csvs/winners-2nd-place-responded-2024-07-10.csv"
+filename="./csvs/winners-3rd-place-responded-2024-07-22.csv"
 raw_addresses=$(awk -F, '{OFS=",";print $3}' $filename)
 
 teams=()
@@ -33,17 +33,18 @@ for ((i=0; i<${#valid_addresses_array[@]}; i+=1)); do
   echo ">>> address: "$address""
   echo ">>> team: "$team""
   echo ">>> track: "$track""
+  echo ""
   package_id="0x41a3350004440adf89a2f837c1e4c0bf1fe4edf6e08b56383ccb5c1606f210c1"
   meet=@0x49b6ea50eaf249f6ded5fb1a096a6297e428ab97f1dc1f873e91ba8a9a8a6073
-  image_id='"https://github.com/sui-foundation/attendance-nft/raw/main/gifs/overflow-2nd.gif"'
-  name="\"2nd Place Winner at Sui Overflow 2024 - ${track}\""
-  desc="\"Congratulations! This hacker from ${team} won 2nd Place at the 2024 Sui Overflow global hackathon!\""
-  tier="2u8"
+  image_id='"https://github.com/sui-foundation/attendance-nft/raw/main/gifs/overflow-3rd.gif"'
+  name="\"3rd Place Winner at Sui Overflow 2024 - ${track}\""
+  desc="\"Congratulations! This hacker from ${team} won 3rd Place at the 2024 Sui Overflow global hackathon!\""
+  tier="3u8"
 
   t=$(date '+%Y-%m-%dT%H:%M:%S')
   teamname=$(echo $team | tr ' ' '-')
 
-  echo $t >> ./logs/winners-2nd-place-${teamname}.log
+  echo $t >> ./logs/winners-3rd-place-${teamname}-batch2.log
 
   sui client ptb \
     --assign meet $meet \
@@ -53,7 +54,7 @@ for ((i=0; i<${#valid_addresses_array[@]}; i+=1)); do
     --assign image "$image_id" \
     --assign addr "$address" \
     --move-call $package_id::attendance::mint_and_transfer meet name desc image tier addr \
-    --gas-budget 500000000 >> ./logs/winners-2nd-place-${teamname}.log
+    --gas-budget 500000000 >> ./logs/winners-3rd-place-${teamname}-batch2.log
 
   echo "Sleeping for 5 second..."
   sleep 5
